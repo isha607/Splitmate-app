@@ -3,6 +3,9 @@ import type { ReactNode } from 'react'
 import { useAuth } from './context/AuthContext'
 import AuthPage from './pages/AuthPage'
 import HomePage from './pages/HomePage'
+import CreateRoomPage from './pages/CreateRoomPage'
+import JoinRoomPage from './pages/JoinRoomPage'
+import RoomPage from './pages/RoomPage'
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
@@ -15,6 +18,9 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<AuthPage />} />
       <Route path="/" element={<Protected><HomePage /></Protected>} />
+      <Route path="/rooms/new" element={<Protected><CreateRoomPage /></Protected>} />
+      <Route path="/rooms/join" element={<Protected><JoinRoomPage /></Protected>} />
+      <Route path="/rooms/:roomId" element={<Protected><RoomPage /></Protected>} />
     </Routes>
   )
 }
