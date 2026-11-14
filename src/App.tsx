@@ -1,11 +1,22 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { useAuth } from './context/AuthContext'
 import AuthPage from './pages/AuthPage'
-import HomePage from './pages/HomePage'
 import CreateRoomPage from './pages/CreateRoomPage'
 import JoinRoomPage from './pages/JoinRoomPage'
 import RoomPage from './pages/RoomPage'
+
+function HomePage() {
+  return (
+    <main className="p-10 text-center">
+      <h1 className="mb-6 text-3xl font-bold">Splitmate</h1>
+      <nav className="flex justify-center gap-4">
+        <Link to="/rooms/new">Create a room</Link>
+        <Link to="/rooms/join">Join a room</Link>
+      </nav>
+    </main>
+  )
+}
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
@@ -21,6 +32,7 @@ export default function App() {
       <Route path="/rooms/new" element={<Protected><CreateRoomPage /></Protected>} />
       <Route path="/rooms/join" element={<Protected><JoinRoomPage /></Protected>} />
       <Route path="/rooms/:roomId" element={<Protected><RoomPage /></Protected>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
