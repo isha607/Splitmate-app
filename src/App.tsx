@@ -1,9 +1,20 @@
-function App() {
-  return (
-    <div className="min-h-screen bg-[#F8F9FC] flex items-center justify-center">
-      <h1 className="text-3xl font-bold text-indigo-600">SplitMate</h1>
-    </div>
-  )
+import { Navigate, Route, Routes } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { useAuth } from './context/AuthContext'
+import AuthPage from './pages/AuthPage'
+import HomePage from './pages/HomePage'
+
+function Protected({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="p-10 text-center text-muted">Loading...</div>
+  return user ? <>{children}</> : <Navigate to="/login" replace />
 }
 
-export default App
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<AuthPage />} />
+      <Route path="/" element={<Protected><HomePage /></Protected>} />
+    </Routes>
+  )
+}
