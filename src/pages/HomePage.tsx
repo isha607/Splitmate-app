@@ -45,7 +45,7 @@ export default function HomePage() {
       {rooms?.map((r) => (
         <Link key={r.id} to={`/rooms/${r.id}`} className="block rounded-3xl bg-white p-5 shadow">
           <p className="text-lg font-extrabold">{r.name}</p>
-          <p className="text-sm text-muted capitalize">{r.room_type} · {r.room_code}</p>
+          <p className="text-sm capitalize text-muted">{r.room_type} · {r.room_code}</p>
         </Link>
       ))}
     </div>
