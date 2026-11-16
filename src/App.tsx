@@ -7,6 +7,7 @@ import CreateRoomPage from './pages/CreateRoomPage'
 import JoinRoomPage from './pages/JoinRoomPage'
 import RoomPage from './pages/RoomPage'
 import AddExpensePage from './pages/AddExpensePage'
+import SettlementsPage from './pages/SettlementsPage'
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/" element={<Protected><HomePage /></Protected>} />
       <Route path="/rooms/new" element={<Protected><CreateRoomPage /></Protected>} />
       <Route path="/rooms/join" element={<Protected><JoinRoomPage /></Protected>} />
+      <Route path="/rooms/:roomId/settlements" element={<Protected><SettlementsPage /></Protected>} />
       <Route path="/rooms/:roomId/expense/new" element={<Protected><AddExpensePage /></Protected>} />
       <Route path="/rooms/:roomId" element={<Protected><RoomPage /></Protected>} />
       <Route path="*" element={<Navigate to="/" replace />} />

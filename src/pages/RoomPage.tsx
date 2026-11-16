@@ -54,13 +54,10 @@ export default function RoomPage() {
 const qc = useQueryClient()
 useEffect(() => {
   if (!roomId) return
-  const ch = supabase
-    .channel(`room-${roomId}`)
-    .on('postgres_changes',
-      { event: '*', schema: 'public', table: 'expenses', filter: `room_id=eq.${roomId}` },
+  const ch = supabase.channel(`room-${roomId}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses', filter: `room_id=eq.${roomId}` },
       () => qc.invalidateQueries({ queryKey: ['expenses', roomId] }))
-    .on('postgres_changes',
-      { event: '*', schema: 'public', table: 'room_members', filter: `room_id=eq.${roomId}` },
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'room_members', filter: `room_id=eq.${roomId}` },
       () => qc.invalidateQueries({ queryKey: ['members', roomId] }))
     .subscribe()
   return () => { supabase.removeChannel(ch) }
@@ -125,7 +122,10 @@ useEffect(() => {
           </div>
         ))}
       </div>
-
+<Link to={`/rooms/${roomId}/settlements`}
+  className="block rounded-3xl bg-lavender p-4 text-center font-bold text-brand">
+  Settlements: who owes whom →
+</Link>
       <Link to={`/rooms/${roomId}/expense/new`}
         className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-brand px-8 py-4 font-bold text-white shadow-xl">
         + Add expense
