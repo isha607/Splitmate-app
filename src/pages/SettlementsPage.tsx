@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { formatINR } from '../lib/splitEngine'
+import { simplifyDebts } from '../lib/debtSimplifier'
 
 type Debt = {
   expense_id: string; debtor_id: string; creditor_id: string
@@ -101,6 +102,12 @@ export default function SettlementsPage() {
   const owedToMe = (debts ?? []).filter((d) => d.creditor_id === user?.id)
   const totalOwe = iOwe.reduce((s, d) => s + d.remaining, 0)
   const totalOwed = owedToMe.reduce((s, d) => s + d.remaining, 0)
+  const net: Record<string, number> = {}
+;(debts ?? []).forEach((d) => {
+  net[d.debtor_id] = (net[d.debtor_id] ?? 0) - d.remaining
+  net[d.creditor_id] = (net[d.creditor_id] ?? 0) + d.remaining
+})
+const suggestions = simplifyDebts(net)
 
   function refreshAll() {
     qc.invalidateQueries({ queryKey: ['debts', roomId] })
@@ -147,6 +154,19 @@ export default function SettlementsPage() {
           <p className="text-xs font-semibold text-ok">You are owed</p>
           <p className="text-xl font-extrabold text-ok">{formatINR(totalOwed)}</p>
         </div>
+      </div>
+
+      <div className="space-y-2 rounded-3xl bg-lavender p-5">
+        <h2 className="font-bold text-brand">Suggested settlements</h2>
+        {suggestions.length === 0 && <p className="text-sm text-muted">Everyone is settled up ✅</p>}
+        {suggestions.map((t, i) => (
+          <p key={i} className="text-sm font-semibold">
+            {nameOf(t.from)} → {nameOf(t.to)}: {formatINR(t.amount)}
+          </p>
+        ))}
+        <p className="text-xs text-muted">
+          Ye sirf suggestion hai. Original expenses nahi badalte, aur kuch apne aap settle nahi hota.
+        </p>
       </div>
 
       {/* YOU OWE */}
