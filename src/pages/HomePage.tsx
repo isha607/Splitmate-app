@@ -17,6 +17,18 @@ export default function HomePage() {
     enabled: !!user,
   })
 
+  const { data: unread } = useQuery({
+    queryKey: ['notifications', user?.id, 'unread'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('notifications').select('id', { count: 'exact', head: true }).eq('is_read', false)
+      if (error) throw error
+      return count ?? 0
+    },
+    enabled: !!user,
+    refetchInterval: 15000,
+  })
+
   const { data: rooms } = useQuery({
     queryKey: ['rooms'],
     queryFn: async () => {
@@ -32,7 +44,12 @@ export default function HomePage() {
     <div className="mx-auto max-w-md space-y-4 p-5">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-extrabold">Hi {profile?.full_name ?? '...'} 👋</h1>
-        <button onClick={() => supabase.auth.signOut()} className="text-sm text-muted">Log out</button>
+        <div className="flex items-center gap-4">
+          <Link to="/notifications" className="relative text-xl">
+            🔔{!!unread && <span className="absolute -right-2 -top-2 rounded-full bg-owed px-1.5 text-[10px] font-bold text-white">{unread}</span>}
+          </Link>
+          <button onClick={() => supabase.auth.signOut()} className="text-sm text-muted">Log out</button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
